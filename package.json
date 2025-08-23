@@ -1,0 +1,45 @@
+{
+  "name": "robot-swarm-sei",
+  "version": "1.0.0",
+  "description": "Autonomous Payment Robots with Robot-to-Robot Marketplaces on Sei Network",
+  "main": "index.js",
+  "scripts": {
+    "setup-sei-connection": "cd sei/mcp-tools && npm run setup",
+    "test-mcp-connection": "cd sei/mcp-tools && npm run test-connection",
+    "deploy-contracts": "cd sei/contracts && forge script script/Deploy.s.sol --rpc-url sei-testnet --broadcast",
+    "start-dashboard": "cd app/ui-overlay && npm start",
+    "run-demo": "python scripts/run_demo.py",
+    "test": "npm run test-contracts && npm run test-mcp && python -m pytest",
+    "test-contracts": "cd sei/contracts && forge test",
+    "test-mcp": "cd sei/mcp-tools && npm test"
+  },
+  "keywords": [
+    "robots",
+    "blockchain",
+    "sei",
+    "autonomous",
+    "hackathon",
+    "webots",
+    "disaster-response"
+  ],
+  "author": "Robot Swarm Team",
+  "license": "MIT",
+  "dependencies": {
+    "@sei-js/core": "^1.0.0",
+    "@sei-js/cosmjs": "^1.0.0",
+    "ethers": "^6.8.0",
+    "web3": "^4.0.0",
+    "rivalz-sdk": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "ts-node": "^10.9.0",
+    "jest": "^29.0.0",
+    "@types/jest": "^29.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "name": "sei-mcp-tools",
+  "version": "1.0.0",
+  "description": "Sei Network MCP tools for Robot Swarm Coordination",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "setup": "node scripts/setup-sei-connection.js",
+    "test-connection": "node scripts/test-connection.js",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@sei-js/core": "^1.0.0",
+    "@sei-js/cosmjs": "^1.0.0",
+    "@sei-js/proto": "^1.0.0",
+    "ethers": "^6.8.0",
+    "dotenv": "^16.0.0",
+    "ws": "^8.13.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/ws": "^8.5.0",
+    "typescript": "^5.0.0",
+    "jest": "^29.0.0",
+    "@types/jest": "^29.0.0",
+    "ts-jest": "^29.0.0"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "extensionsToTreatAsEsm": [".ts"],
+    "globals": {
+      "ts-jest": {
+        "useESM": true
+      }
+    }
+  }
+}

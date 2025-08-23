@@ -1,0 +1,9 @@
+{
+  "contract_addresses": {
+    "robot_marketplace": "0x1234567890123456789012345678901234567890",
+    "task_auction": "0x2345678901234567890123456789012345678901",
+    "proof_verification": "0x3456789012345678901234567890123456789012"
+  },
+  "demo_mode": true,
+  "network": "sei-testnet"
+}
