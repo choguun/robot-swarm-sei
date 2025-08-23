@@ -14,6 +14,16 @@ from typing import Dict, List, Tuple, Optional
 # Webots imports
 from controller import Robot, GPS, Camera, Compass, InertialUnit, Emitter, Receiver
 
+# AI Brain import
+try:
+    from ai_brain import AIBrain
+    AI_BRAIN_AVAILABLE = True
+    print("🧠 AI Brain module loaded - Advanced ML capabilities enabled")
+except ImportError as e:
+    print(f"⚠️  AI Brain not available: {e}")
+    print("   Falling back to rule-based decision making")
+    AI_BRAIN_AVAILABLE = False
+
 class UGVAgent:
     """Autonomous UGV agent for disaster response tasks"""
     
@@ -41,7 +51,18 @@ class UGVAgent:
         self.bids_sent = {}
         self.task_assignments = {}
         
-        print(f"[{self.robot_id}] UGV Agent initialized with capabilities: {self.capabilities}")
+        # Initialize AI Brain
+        if AI_BRAIN_AVAILABLE:
+            self.ai_brain = AIBrain(self.robot_id, self.capabilities)
+            self.ai_enabled = True
+            print(f"[{self.robot_id}] 🤖 AI-Enhanced Agent initialized with ML capabilities")
+        else:
+            self.ai_brain = None
+            self.ai_enabled = False
+            print(f"[{self.robot_id}] UGV Agent initialized with capabilities: {self.capabilities}")
+        
+        print(f"   • Navigation Speed: {self.capabilities['navigation_speed']}")
+        print(f"   • AI Mode: {'🧠 ENABLED' if self.ai_enabled else '📊 Rule-based'}")
     
     def _init_capabilities(self) -> Dict[str, float]:
         """Initialize robot capabilities based on robot name"""
@@ -125,12 +146,78 @@ class UGVAgent:
                 self.position = positions[self.robot_id]
     
     def calculate_bid(self, task: Dict) -> Dict:
-        """Calculate bid for a given task"""
+        """AI-Enhanced bid calculation with machine learning"""
+        
+        if self.ai_enabled and self.ai_brain:
+            # 🧠 Use AI Brain for intelligent bidding
+            return self._ai_calculate_bid(task)
+        else:
+            # 📊 Fall back to rule-based bidding
+            return self._rule_based_calculate_bid(task)
+    
+    def _ai_calculate_bid(self, task: Dict) -> Dict:
+        """AI-powered intelligent bidding with machine learning"""
+        # Gather market intelligence
+        market_info = self._gather_market_intelligence()
+        
+        # Current robot status for AI decision
+        robot_status = {
+            'battery_level': self.battery_level,
+            'current_position': self.position,
+            'active_tasks': len(self.task_assignments),
+            'recent_performance': self.reputation_score
+        }
+        
+        # Use AI brain to make intelligent bid decision
+        ai_decision = self.ai_brain.make_intelligent_bid(task, market_info, robot_status)
+        
+        # Extract traditional metrics for compatibility
+        task_location = task.get('location', [0, 0])
+        distance = math.sqrt(
+            (task_location[0] - self.position[0])**2 + 
+            (task_location[1] - self.position[1])**2
+        )
+        
+        # Estimate time using AI-enhanced method
+        base_time = distance / self.capabilities['navigation_speed']
+        task_execution_time = self._estimate_task_time(task.get('type', 'scan'))
+        total_time = base_time + task_execution_time
+        
+        # Calculate energy and capability match
+        energy_cost = self._calculate_energy_cost(distance, task.get('type', 'scan'))
+        capability_match = self._calculate_capability_match(task)
+        
+        print(f"[{self.robot_id}] 🧠 AI BID: {ai_decision['bid_amount']} SEI")
+        print(f"   • Confidence: {ai_decision['confidence']:.2%}")
+        print(f"   • RL Factor: {ai_decision['ai_reasoning']['rl_adjustment']:.2f}x")
+        print(f"   • Win Rate: {ai_decision['learning_metadata']['win_rate']:.2%}")
+        print(f"   • Experience: {ai_decision['learning_metadata']['experience_count']} samples")
+        
+        return {
+            'robotId': self.robot_id,
+            'taskId': task['taskId'],
+            'bidAmount': ai_decision['bid_amount'],
+            'estimatedTime': int(total_time),
+            'capabilityMatch': capability_match,
+            'energyCost': energy_cost,
+            'reputation': self.reputation_score,
+            'batteryLevel': self.battery_level,
+            # AI-specific metadata
+            'ai_metadata': {
+                'confidence': ai_decision['confidence'],
+                'decision_method': 'reinforcement_learning',
+                'learning_progress': self.ai_brain.learning_progress,
+                'model_versions': self.ai_brain.ai_model_versions,
+                'reasoning': ai_decision['ai_reasoning']
+            }
+        }
+    
+    def _rule_based_calculate_bid(self, task: Dict) -> Dict:
+        """Traditional rule-based bidding (fallback)"""
         # Extract task parameters
         task_location = task.get('location', [0, 0])
         task_type = task.get('type', 'scan')
         task_priority = task.get('priority', 1.0)
-        task_deadline = task.get('deadline', 300)  # seconds
         
         # Calculate distance to task
         distance = math.sqrt(
@@ -173,7 +260,26 @@ class UGVAgent:
             'capabilityMatch': capability_match,
             'energyCost': energy_cost,
             'reputation': self.reputation_score,
-            'batteryLevel': self.battery_level
+            'batteryLevel': self.battery_level,
+            'ai_metadata': {
+                'decision_method': 'rule_based_fallback'
+            }
+        }
+    
+    def _gather_market_intelligence(self) -> Dict:
+        """Gather market intelligence for AI decision making"""
+        # Simulate market data gathering (in production, this would query blockchain/coordinator)
+        return {
+            'competition_level': 0.7,  # How many robots are likely bidding
+            'recent_win_rate': 0.3,    # Recent auction success rate
+            'average_winning_bid': 180, # Average winning bid amount
+            'market_volatility': 0.4,  # How much bid prices fluctuate
+            'competitors': {
+                # Simulated competitor data for AI analysis
+                'ugv_alpha': {'recent_bids': [120, 150, 140], 'wins': 2, 'total_auctions': 5},
+                'ugv_beta': {'recent_bids': [180, 200, 190], 'wins': 3, 'total_auctions': 6},
+                'ugv_gamma': {'recent_bids': [100, 130, 120], 'wins': 1, 'total_auctions': 4}
+            }
         }
     
     def _estimate_task_time(self, task_type: str) -> float:
@@ -505,6 +611,122 @@ class UGVAgent:
                     # All waypoints completed
                     self.submit_task_completion()
                     current_waypoint_index = 0
+    
+    def learn_from_auction_result(self, task: Dict, bid_info: Dict, won: bool, winner_info: Dict = None):
+        """AI learning from auction outcomes"""
+        if not self.ai_enabled or not self.ai_brain:
+            return
+        
+        # Prepare market information for learning
+        market_info = self._gather_market_intelligence()
+        if winner_info:
+            market_info['winning_bid'] = winner_info.get('bidAmount', 0)
+            market_info['winner_id'] = winner_info.get('robotId', 'unknown')
+        
+        # Let AI brain learn from this experience
+        self.ai_brain.learn_from_auction_result(
+            task=task, 
+            bid_amount=bid_info['bidAmount'], 
+            won=won, 
+            market_info=market_info
+        )
+        
+        # Update our own performance tracking
+        if won:
+            self.reputation_score = min(1.0, self.reputation_score + 0.01)
+        else:
+            # Small penalty for losing, but not too harsh to encourage exploration
+            self.reputation_score = max(0.1, self.reputation_score - 0.005)
+    
+    def ai_analyze_environment(self) -> Dict:
+        """AI-powered environment analysis using computer vision"""
+        if not self.ai_enabled or not self.ai_brain:
+            return {'error': 'AI not available'}
+        
+        # Get camera image data
+        image_data = b''  # Placeholder - in real Webots this would be camera.getImage()
+        if hasattr(self, 'camera') and self.camera:
+            try:
+                # Simulate camera data capture
+                timestamp = str(int(time.time() * 1000))
+                image_data = f"simulated_image_data_{self.robot_id}_{timestamp}".encode()
+            except Exception as e:
+                print(f"[{self.robot_id}] Camera error: {e}")
+        
+        # Gather sensor data
+        sensor_data = {
+            'proximity_sensors': [sensor.getValue() for sensor in self.proximity_sensors],
+            'battery_level': self.battery_level,
+            'position': self.position,
+            'timestamp': time.time()
+        }
+        
+        # Use AI brain for environmental analysis
+        try:
+            environment_analysis = self.ai_brain.process_task_environment(image_data, sensor_data)
+            
+            print(f"[{self.robot_id}] 👁️  AI Vision Analysis:")
+            print(f"   • Objects Detected: {len(environment_analysis.get('objects_detected', []))}")
+            print(f"   • Navigation Safety: {environment_analysis.get('navigation_safety', 0.8):.2%}")
+            print(f"   • Scene Complexity: {environment_analysis.get('scene_complexity', 0.3):.2f}")
+            
+            return environment_analysis
+            
+        except Exception as e:
+            print(f"[{self.robot_id}] ⚠️  AI analysis error: {e}")
+            return {'error': str(e)}
+    
+    def get_ai_status_report(self) -> Dict:
+        """Get comprehensive AI system status for monitoring"""
+        if not self.ai_enabled or not self.ai_brain:
+            return {
+                'ai_enabled': False,
+                'decision_method': 'rule_based',
+                'learning_progress': 0.0
+            }
+        
+        ai_status = self.ai_brain.get_ai_status_report()
+        ai_status.update({
+            'robot_id': self.robot_id,
+            'current_reputation': self.reputation_score,
+            'battery_level': self.battery_level,
+            'active_tasks': len(self.task_assignments),
+            'capabilities': self.capabilities,
+            'system_uptime': time.time() - getattr(self, 'start_time', time.time())
+        })
+        
+        return ai_status
+    
+    def adapt_ai_strategy(self, performance_feedback: Dict):
+        """Adapt AI strategy based on performance feedback"""
+        if not self.ai_enabled or not self.ai_brain:
+            return
+        
+        # Update learning parameters based on performance
+        recent_win_rate = performance_feedback.get('win_rate', 0.3)
+        
+        # If performing poorly, increase exploration
+        if recent_win_rate < 0.2:
+            if hasattr(self.ai_brain.rl_agent, 'epsilon'):
+                self.ai_brain.rl_agent.epsilon = min(0.5, self.ai_brain.rl_agent.epsilon + 0.05)
+                print(f"[{self.robot_id}] 🔄 Increasing exploration (ε={self.ai_brain.rl_agent.epsilon:.3f})")
+        
+        # If performing well, focus more on exploitation
+        elif recent_win_rate > 0.6:
+            if hasattr(self.ai_brain.rl_agent, 'epsilon'):
+                self.ai_brain.rl_agent.epsilon = max(0.05, self.ai_brain.rl_agent.epsilon - 0.02)
+                print(f"[{self.robot_id}] 🎯 Reducing exploration (ε={self.ai_brain.rl_agent.epsilon:.3f})")
+        
+        # Update swarm coordination strategy
+        if hasattr(self.ai_brain, 'swarm_intelligence'):
+            cooperation_feedback = performance_feedback.get('cooperation_success', 0.5)
+            current_cooperation = self.ai_brain.swarm_intelligence.collaborative_strategies['collaboration_willingness']
+            
+            # Adjust cooperation strategy based on feedback
+            if cooperation_feedback > 0.7:
+                new_cooperation = min(1.0, current_cooperation + 0.05)
+                self.ai_brain.swarm_intelligence.collaborative_strategies['collaboration_willingness'] = new_cooperation
+                print(f"[{self.robot_id}] 🤝 Increasing cooperation willingness ({new_cooperation:.2f})")
 
 if __name__ == "__main__":
     agent = UGVAgent()
