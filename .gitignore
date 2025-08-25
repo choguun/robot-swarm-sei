@@ -1,2 +1,40 @@
 *.md
 !README.md
+
+# Environment variables and secrets
+.env
+.env.local
+.env.*.local
+*.key
+webots/controllers/.env
+
+# Smart contract artifacts
+sei/contracts/out/
+sei/contracts/cache/
+sei/contracts/broadcast/
+sei/contracts/lib/
+
+# Node modules
+node_modules/
+**/node_modules/
+
+# Build outputs
+dist/
+build/
+*.log
+
+# IDE and system files
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+tmp/
+*.tmp
+*.cache
+.claude/settings.local.json
+/sei/__pycache__
+/webots/controllers/coordinator_supervisor/__pycache__
+/webots/controllers/ugv_agent/__pycache__

@@ -29,7 +29,8 @@ contract Deploy is Script {
         console.log("Supervisor:", config.supervisor);
         console.log("Attestor:", config.attestor);
         
-        vm.startBroadcast(vm.envUint("PRIVATE_KEY"));
+        uint256 privateKey = vm.envUint("PRIVATE_KEY");
+        vm.startBroadcast(privateKey);
         
         // 1. Deploy RobotMarketplace
         console.log("\n=== Deploying RobotMarketplace ===");
@@ -59,12 +60,13 @@ contract Deploy is Script {
         // 6. Generate deployment summary
         _generateDeploymentSummary(marketplace, auction, verification, config);
         
-        console.log("\n🎉 Deployment completed successfully!");
+        console.log("\\n Deployment completed successfully!");
         console.log("Save these addresses for your application configuration.");
     }
     
     function _getConfig() internal view returns (DeploymentConfig memory) {
-        address deployer = vm.addr(vm.envUint("PRIVATE_KEY"));
+        uint256 privateKey = vm.envUint("PRIVATE_KEY");
+        address deployer = vm.addr(privateKey);
         
         return DeploymentConfig({
             deployer: deployer,
@@ -160,43 +162,40 @@ contract Deploy is Script {
         ProofVerification verification,
         DeploymentConfig memory config
     ) internal view {
-        console.log("\n╔══════════════════════════════════════════════════════════╗");
-        console.log("║              DEPLOYMENT SUMMARY                          ║");
-        console.log("╠══════════════════════════════════════════════════════════╣");
-        console.log("║ Robot Swarm Coordination System                         ║");
-        console.log("║ Deployed to Sei Network                                 ║");
-        console.log("╚══════════════════════════════════════════════════════════╝");
+        console.log("\\n==============================================================");
+        console.log("              DEPLOYMENT SUMMARY                          ");
+        console.log("==============================================================");
+        console.log(" Robot Swarm Coordination System                         ");
+        console.log(" Deployed to Sei Network                                 ");
+        console.log("==============================================================");
         
-        console.log("\n📋 CONTRACT ADDRESSES:");
+        console.log("\\n CONTRACT ADDRESSES:");
         console.log("RobotMarketplace:", address(marketplace));
         console.log("TaskAuction:", address(auction));
         console.log("ProofVerification:", address(verification));
         
-        console.log("\n🔐 ROLE ASSIGNMENTS:");
+        console.log("\\n ROLE ASSIGNMENTS:");
         console.log("Admin:", config.deployer);
         console.log("Supervisor:", config.supervisor);
         console.log("Attestor:", config.attestor);
         
-        console.log("\n⚙️  CONFIGURATION:");
+        console.log("\\n CONFIGURATION:");
         console.log("Auction Duration: 30 seconds");
         console.log("Task Timeout: 300 seconds (5 minutes)");
         console.log("Verification Timeout: 60 seconds");
         
-        console.log("\n🤖 NEXT STEPS:");
+        console.log("\\n NEXT STEPS:");
         console.log("1. Update your MCP tools with these contract addresses");
         console.log("2. Configure robot controllers with the marketplace address");
         console.log("3. Set up Rivalz ADCS oracle integration if using external verification");
         console.log("4. Register robots in the marketplace");
         console.log("5. Create your first mission and start the demo!");
         
-        console.log("\n💡 USEFUL COMMANDS:");
-        console.log("Register Robot:");
-        console.log("  cast send", address(marketplace), '"registerRobot(string,uint256[])"', '"robot_1"', '"[120,100,80,90,85]"');
-        console.log("\nCreate Task:");
-        console.log("  cast send", address(auction), '"createTask(uint256,string,string,uint256[2],uint256[],uint256)"', 
-                   "1", '"scan"', '"Scan Zone A"', '"[600,400]"', '"[100,80,70,80,70]"', "1000000000000000000");
+        console.log("\\n USEFUL COMMANDS:");
+        console.log("Register Robot: cast send <MARKETPLACE_ADDRESS> registerRobot(string,uint256[])");
+        console.log("Create Task: cast send <AUCTION_ADDRESS> createTask(...)");
         
-        console.log("\n🌐 NETWORK INFO:");
+        console.log("\\n NETWORK INFO:");
         console.log("Network: Sei Testnet");
         console.log("Chain ID:", block.chainid);
         console.log("Block Number:", block.number);

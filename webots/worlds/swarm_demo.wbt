@@ -1,0 +1,148 @@
+#VRML_SIM R2023b utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/gctronic/e-puck/protos/E-puck.proto"
+
+WorldInfo {
+  title "Simple AI Swarm Demo - Working Version"
+  info [
+    "Simple AI robot swarm demonstration"
+    "Focus on movement and coordination"
+    "Blockchain integration active"
+  ]
+  basicTimeStep 32
+  FPS 30
+}
+
+Viewpoint {
+  orientation -0.4 0.8 0.4 1.5
+  position 0 6 4
+}
+
+TexturedBackground {
+}
+
+TexturedBackgroundLight {
+}
+
+RectangleArena {
+  translation 0 0 0
+  floorSize 8 8
+  floorTileSize 1 1
+  wallHeight 0.5
+}
+
+# Task Zones - Simple colored areas
+Transform {
+  translation -3 -3 0.005
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 1 0.3 0.3
+        transparency 0.7
+      }
+      geometry Box {
+        size 2 2 0.01
+      }
+    }
+  ]
+}
+
+Transform {
+  translation 3 -3 0.005
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.3 1 0.3
+        transparency 0.7
+      }
+      geometry Box {
+        size 2 2 0.01
+      }
+    }
+  ]
+}
+
+Transform {
+  translation 0 3 0.005
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.3 0.3 1
+        transparency 0.7
+      }
+      geometry Box {
+        size 2 2 0.01
+      }
+    }
+  ]
+}
+
+# Central coordination area
+Transform {
+  translation 0 0 0.005
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 1 1 0.3
+        transparency 0.7
+      }
+      geometry Cylinder {
+        height 0.01
+        radius 1
+      }
+    }
+  ]
+}
+
+# Robots with simple setup
+DEF UGV_ALPHA E-puck {
+  translation -0.5 -0.5 0
+  rotation 0 0 1 0
+  name "ugv_alpha"
+  controller "ugv_agent"
+  supervisor FALSE
+}
+
+DEF UGV_BETA E-puck {
+  translation 0.5 -0.5 0
+  rotation 0 0 1 1.5708
+  name "ugv_beta"
+  controller "ugv_agent"
+  supervisor FALSE
+}
+
+DEF UGV_GAMMA E-puck {
+  translation 0 -2 0
+  rotation 0 0 1 3.14159
+  name "ugv_gamma"
+  controller "ugv_agent"
+  supervisor FALSE
+}
+
+# Simple supervisor
+DEF SUPERVISOR Robot {
+  translation 0 0 1
+  name "supervisor"
+  controller "coordinator_supervisor"
+  supervisor TRUE
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 1 1 0
+        transparency 0.8
+      }
+      geometry Sphere {
+        radius 0.1
+      }
+    }
+    Emitter {
+      channel 1
+    }
+    Receiver {
+      channel 1
+    }
+  ]
+}

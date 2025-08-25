@@ -35,3 +35,7 @@ pytest-cov>=4.0.0
 black>=22.0.0
 flake8>=5.0.0
 mypy>=0.991
+
+# AI and Environment
+swarms>=8.1.2
+python-dotenv>=1.0.0

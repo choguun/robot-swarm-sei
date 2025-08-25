@@ -509,13 +509,14 @@ class AIBrain:
     
     # Helper methods
     def _calculate_base_bid(self, task: Dict, robot_status: Dict) -> float:
-        """Calculate base bid using traditional heuristics"""
+        """Calculate base bid using traditional heuristics - LOWERED FOR TESTNET"""
         task_location = task.get('location', [0, 0])
         distance = math.sqrt(task_location[0]**2 + task_location[1]**2)
         
-        base_cost = 50
-        distance_factor = 1 + (distance * 0.1)
-        energy_factor = 2.0 - robot_status.get('battery_level', 100) / 100.0
+        # HEAVILY REDUCED for demo - 60% smaller
+        base_cost = 0.02  # Reduced from 0.05 to 0.02 (60% reduction)
+        distance_factor = 1 + (distance * 0.0005)  # Reduced from 0.001 to 0.0005 (50% reduction)
+        energy_factor = 1.0 + (2.0 - robot_status.get('battery_level', 100) / 100.0) * 0.005  # Reduced from 0.01 to 0.005
         
         return base_cost * distance_factor * energy_factor
     

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./TaskAuction.sol";
 
 /**
@@ -148,7 +148,7 @@ contract ProofVerification is AccessControl, ReentrancyGuard {
         uint256 completionTime
     ) external nonReentrant {
         // Verify caller is assigned robot for this task
-        (, , , , , address assignedRobot,) = taskAuction.getTaskDetails(taskId);
+        (, , , , , address assignedRobot, ,) = taskAuction.getTaskDetails(taskId);
         require(assignedRobot == msg.sender, "Not assigned robot");
         require(proofSubmissions[taskId].robot == address(0), "Proof already submitted");
         

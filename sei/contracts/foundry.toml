@@ -2,6 +2,12 @@
 src = "src"
 out = "out"
 libs = ["lib"]
+solc_version = "0.8.20"
+optimizer = true
+optimizer_runs = 1000
+via_ir = true
+gas_limit = 30000000
+gas_price = 100000000
 remappings = [
     "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
     "@chainlink/contracts/=lib/chainlink-brownie-contracts/contracts/"
@@ -15,16 +21,10 @@ sei-mainnet = "https://evm-rpc.sei-apis.com"
 [etherscan]
 sei-testnet = { key = "${SEI_ETHERSCAN_API_KEY}", url = "https://seitrace.com/api" }
 
-# Compiler settings optimized for smart contracts
-solc_version = "0.8.20"
-optimizer = true
-optimizer_runs = 1000
-via_ir = true
-
 # Testing configuration
-fuzz = { runs = 1000 }
-invariant = { runs = 1000, depth = 500 }
+[profile.default.fuzz]
+runs = 1000
 
-# Gas settings for Sei Network (low gas costs)
-gas_limit = 30000000
-gas_price = 100000000  # 0.1 gwei equivalent
+[profile.default.invariant]
+runs = 1000
+depth = 500
