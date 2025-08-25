@@ -1,0 +1,3 @@
+#!/bin/bash
+# Python wrapper script for Webots controllers
+exec /Users/<yourpath>/.pyenv/versions/<version>/bin/<version> "$@"
