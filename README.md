@@ -183,7 +183,3 @@ forge script script/Deploy.s.sol --rpc-url https://evm-rpc-testnet.sei-apis.com
 5. Watch 3 AI robots with individual wallets bid for tasks and execute missions with real blockchain transactions!
 
 ---
-
-**🤖 The future of autonomous agent economies starts here - robots that think, bid, work, and get paid independently at machine speed.**
-
-*Built for The Accelerated Intelligence Project Hackathon 2024*
