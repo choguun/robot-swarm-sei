@@ -6,19 +6,19 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/gctronic/e-puck/protos/E-puck.proto"
 
 WorldInfo {
-  title "Simple AI Swarm Demo - Working Version"
+  title "Robot Swarm Demo - Working Movement"
   info [
-    "Simple AI robot swarm demonstration"
-    "Focus on movement and coordination"
-    "Blockchain integration active"
+    "Working robot movement with blockchain"
+    "Large visual indicators for visibility"
   ]
   basicTimeStep 32
   FPS 30
 }
 
 Viewpoint {
-  orientation -0.4 0.8 0.4 1.5
-  position 0 6 4
+  orientation -0.577 0.577 0.577 2.094
+  position 0 2.5 2
+  fieldOfView 1.0
 }
 
 TexturedBackground {
@@ -29,14 +29,14 @@ TexturedBackgroundLight {
 
 RectangleArena {
   translation 0 0 0
-  floorSize 8 8
-  floorTileSize 1 1
-  wallHeight 0.5
+  floorSize 3 3
+  floorTileSize 0.25 0.25
+  wallHeight 0.2
 }
 
-# Task Zones - Simple colored areas
+# Task Zones - Compact for smaller arena
 Transform {
-  translation -3 -3 0.005
+  translation -0.8 -0.8 0.005
   children [
     Shape {
       appearance PBRAppearance {
@@ -44,14 +44,14 @@ Transform {
         transparency 0.7
       }
       geometry Box {
-        size 2 2 0.01
+        size 0.6 0.6 0.01
       }
     }
   ]
 }
 
 Transform {
-  translation 3 -3 0.005
+  translation 0.8 -0.8 0.005
   children [
     Shape {
       appearance PBRAppearance {
@@ -59,14 +59,14 @@ Transform {
         transparency 0.7
       }
       geometry Box {
-        size 2 2 0.01
+        size 0.6 0.6 0.01
       }
     }
   ]
 }
 
 Transform {
-  translation 0 3 0.005
+  translation 0 0.8 0.005
   children [
     Shape {
       appearance PBRAppearance {
@@ -74,7 +74,7 @@ Transform {
         transparency 0.7
       }
       geometry Box {
-        size 2 2 0.01
+        size 0.6 0.6 0.01
       }
     }
   ]
@@ -91,40 +91,168 @@ Transform {
       }
       geometry Cylinder {
         height 0.01
-        radius 1
+        radius 0.3
       }
     }
   ]
 }
 
-# Robots with simple setup
+# E-puck robots positioned in compact arena
 DEF UGV_ALPHA E-puck {
-  translation -0.5 -0.5 0
+  translation -0.3 -0.3 0
   rotation 0 0 1 0
   name "ugv_alpha"
   controller "ugv_agent"
   supervisor FALSE
+  extensionSlot [
+    Emitter {
+      channel 1
+    }
+    Receiver {
+      channel 1
+    }
+  ]
 }
 
 DEF UGV_BETA E-puck {
-  translation 0.5 -0.5 0
+  translation 0.3 -0.3 0
   rotation 0 0 1 1.5708
-  name "ugv_beta"
+  name "ugv_beta" 
   controller "ugv_agent"
   supervisor FALSE
+  extensionSlot [
+    Emitter {
+      channel 1
+    }
+    Receiver {
+      channel 1
+    }
+  ]
 }
 
 DEF UGV_GAMMA E-puck {
-  translation 0 -2 0
+  translation 0 -0.8 0
   rotation 0 0 1 3.14159
   name "ugv_gamma"
   controller "ugv_agent"
   supervisor FALSE
+  extensionSlot [
+    Emitter {
+      channel 1
+    }
+    Receiver {
+      channel 1
+    }
+  ]
 }
 
-# Simple supervisor
+# HUGE visual indicators - 2x larger robots appearance
+Transform {
+  translation -0.3 -0.3 0.1
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 1 0.2 0.2
+        emissiveColor 1 0.2 0.2
+        transparency 0.2
+      }
+      geometry Cylinder {
+        height 0.2
+        radius 0.2
+      }
+    }
+  ]
+}
+
+Transform {
+  translation 0.3 -0.3 0.1
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.2 1 0.2
+        emissiveColor 0.2 1 0.2
+        transparency 0.2
+      }
+      geometry Cylinder {
+        height 0.2
+        radius 0.2
+      }
+    }
+  ]
+}
+
+Transform {
+  translation 0 -0.8 0.1
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.2 0.2 1
+        emissiveColor 0.2 0.2 1
+        transparency 0.2
+      }
+      geometry Cylinder {
+        height 0.2
+        radius 0.2
+      }
+    }
+  ]
+}
+
+# Compact zone markers
+Transform {
+  translation -0.8 -0.8 0.08
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 1 0.2 0.2
+        emissiveColor 0.8 0.2 0.2
+        transparency 0.4
+      }
+      geometry Cylinder {
+        height 0.08
+        radius 0.15
+      }
+    }
+  ]
+}
+
+Transform {
+  translation 0.8 -0.8 0.08
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.2 1 0.2
+        emissiveColor 0.2 0.8 0.2
+        transparency 0.4
+      }
+      geometry Cylinder {
+        height 0.08
+        radius 0.15
+      }
+    }
+  ]
+}
+
+Transform {
+  translation 0 0.8 0.08
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.2 0.2 1
+        emissiveColor 0.2 0.2 0.8
+        transparency 0.4
+      }
+      geometry Cylinder {
+        height 0.08
+        radius 0.15
+      }
+    }
+  ]
+}
+
+# Supervisor - Central command
 DEF SUPERVISOR Robot {
-  translation 0 0 1
+  translation 0 0 0.3
   name "supervisor"
   controller "coordinator_supervisor"
   supervisor TRUE
@@ -132,10 +260,11 @@ DEF SUPERVISOR Robot {
     Shape {
       appearance PBRAppearance {
         baseColor 1 1 0
-        transparency 0.8
+        emissiveColor 0.5 0.5 0
+        transparency 0.7
       }
       geometry Sphere {
-        radius 0.1
+        radius 0.08
       }
     }
     Emitter {

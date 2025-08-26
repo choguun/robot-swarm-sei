@@ -97,6 +97,9 @@ class CoordinatorSupervisor:
         self.supervisor = Supervisor()
         self.timestep = int(self.supervisor.getBasicTimeStep())
         
+        # Set up optimal camera view for recording
+        self.setup_optimal_view()
+        
         # Load environment variables
         env_path = os.path.join(os.path.dirname(__file__), '..', '.env')
         load_dotenv(env_path)
@@ -831,7 +834,34 @@ class CoordinatorSupervisor:
             print(f"   • Total TXs: {len(self.finality_times)}")
         
         print("="*60 + "\n")
-
+    
+    def setup_optimal_view(self):
+        """Set up optimal camera view for demo recording"""
+        try:
+            # Get the viewpoint node
+            viewpoint = self.supervisor.getFromDef("MAIN_VIEWPOINT")
+            if not viewpoint:
+                # If no named viewpoint, get the default one
+                viewpoint = self.supervisor.getSelf()
+            
+            if viewpoint:
+                # Set position to center the board optimally for recording
+                viewpoint_field = viewpoint.getField("translation")
+                if viewpoint_field:
+                    viewpoint_field.setSFVec3f([0, 8, 6])  # Center, elevated view
+                
+                # Set orientation for top-down angled view
+                orientation_field = viewpoint.getField("rotation")
+                if orientation_field:
+                    orientation_field.setSFRotation([-0.577, 0.577, 0.577, 2.094])
+                
+                print("[COORDINATOR] 📹 Optimal recording view configured")
+            else:
+                print("[COORDINATOR] ⚠️ Could not find viewpoint for camera setup")
+                
+        except Exception as e:
+            print(f"[COORDINATOR] ⚠️ Camera setup failed: {e}")
+    
     def run(self):
         """Main supervisor control loop"""
         print("[COORDINATOR] Starting main control loop")
